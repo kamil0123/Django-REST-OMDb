@@ -1,10 +1,7 @@
-from django.urls import path, include
 from . import views
-from rest_framework import routers
-
-router  = routers.DefaultRouter()
-router.register('moviesApi', views.MovieView)
+from django.conf.urls import url
 
 urlpatterns = [
-  path('', include(router.urls))
+  url(r'^movies/$', views.movie_list),
+  url(r'^movies/(?P<pk>[0-9]+)$', views.movie_detail),
 ]
