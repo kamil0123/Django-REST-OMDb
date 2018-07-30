@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
 
-from .models import Movie
-from .serializers import MovieSerializer
+from .models import Comment, Movie
+from .serializers import CommentSerializer, MovieSerializer
+
 
 # Create your views here.
 @api_view(['GET', 'POST'])
@@ -55,3 +56,7 @@ def movie_detail(request, pk):
     elif request.method == 'DELETE':
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CommentView(viewsets.ModelViewSet):
+  queryset = Comment.objects.all()
+  serializer_class = CommentSerializer
