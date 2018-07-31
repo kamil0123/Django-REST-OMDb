@@ -59,5 +59,39 @@ class ShouldNotPostMovie_whenTitleNotGiven(TestCase):
   def test_post_movie(self):
     self.assertEqual(self.response.status_code, status.HTTP_404_NOT_FOUND)  
 
+class ShouldPostComments(TestCase):
+
+  def setUp(self):
+    Movie.objects.create(
+        title='Lion King', 
+        plot='Story of Simba', 
+        year=1994)
+    Movie.objects.create(
+        title='Reservoir Dogs', 
+        plot='After a simple jewelry heist goes terribly wrong, the surviving criminals begin to suspect that one of them is a police informant.', 
+        year=1992)
+    Movie.objects.create(
+        title='Batman', 
+        plot='The Dark Knight of Gotham City begins his war on crime with his first major enemy being the clownishly homicidal Joker.', 
+        year=1989)
+    Comment.objects.create(
+        movie=Movie.objects.get(id='1'),
+        text='very good movie')
+    Comment.objects.create(
+        movie=Movie.objects.get(id='2'),
+        text='not so good')
+    Comment.objects.create(
+        movie=Movie.objects.get(id='2'),
+        text='what are you saying? its the best')
+
+  def test_get_all_movies(self):
+    # get API response
+    response = client.get(reverse('comment_list'))
+    # get data from db
+    comments = Comment.objects.all()
+    serializer = CommentSerializer(comments, many=True)
+    self.assertEqual(response.data, serializer.data)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 
