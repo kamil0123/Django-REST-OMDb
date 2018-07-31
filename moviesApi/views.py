@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import requests
@@ -57,6 +57,12 @@ def movie_detail(request, pk):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CommentView(viewsets.ModelViewSet):
-  queryset = Comment.objects.all()
+class CommentView(generics.ListCreateAPIView):
   serializer_class = CommentSerializer
+
+  def get_queryset(self):
+    queryset = Comment.objects.all()
+    movie = self.request.query_params.get('movie', None)
+    if movie is not None:
+        queryset = queryset.filter(movie=movie)
+    return queryset
