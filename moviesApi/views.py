@@ -24,9 +24,12 @@ def movie_list(request, format=None):
       response = requests.get(url)
       search_was_successful = (response.status_code == 200)  # 200 = SUCCESS
       if search_was_successful:
-        search_result = response.json()   
-        movie = Movie.objects.create(title=search_result['Title'], year=search_result['Year'], plot=search_result['Plot']) 
-        return Response(search_result, status=status.HTTP_201_CREATED)
+        search_result = response.json()
+        if 'Title' in search_result:
+          movie = Movie.objects.create(title=search_result['Title'], year=search_result['Year'], plot=search_result['Plot']) 
+          return Response(search_result, status=status.HTTP_201_CREATED)
+        else:
+          return Response(status=status.HTTP_404_NOT_FOUND)
       else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
